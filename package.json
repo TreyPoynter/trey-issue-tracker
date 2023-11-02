@@ -1,0 +1,41 @@
+{
+  "name": "issue-tracker",
+  "version": "1.0.0",
+  "description": "This is my Issue Tracker project for AWD 1111",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "start-dev": "nodemon -r dotenv/config server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TreyPoynter/awd1111-issue-tracker.git"
+  },
+  "author": "Trey Poynter",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TreyPoynter/awd1111-issue-tracker/issues"
+  },
+  "homepage": "https://github.com/TreyPoynter/awd1111-issue-tracker#readme",
+  "dependencies": {
+    "@merlin4/express-auth": "^0.0.5",
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "debug": "^4.3.4",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-handlebars": "^7.1.2",
+    "joi": "^17.11.0",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "mongodb": "^6.1.0",
+    "nanoid": "^4.0.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.49.0",
+    "html-validate": "^8.3.0",
+    "stylelint": "^15.10.3"
+  }
+}

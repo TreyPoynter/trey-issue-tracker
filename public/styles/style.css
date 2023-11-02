@@ -1,0 +1,22 @@
+body {
+    background-image: url("../images/blue-background.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+footer { 
+    height: 5%; 
+    position: fixed; 
+    bottom:0%;
+    width:100%; 
+    background-color: #393838;
+    opacity: 1;
+}
+
+.card {
+    width: 25%
+}
+
+#register {
+    border-radius: 20px;
+    background-color: #fff;
+}
