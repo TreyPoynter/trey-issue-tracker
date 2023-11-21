@@ -182,7 +182,7 @@ router.post('/login', validBody(loginSchema), async (req, res) => {
             issueAuthCookie(res, authToken);
             debugUser(`Auth Token for ${resultUser.foundUser.fullName} is ${authToken}`);
         }
-        res.status(resultUser.status).json({message:resultUser.message});
+        res.status(resultUser.status).json({message:resultUser});
     } catch (err) {
         res.status(500).json({error:err.stack});
     }
