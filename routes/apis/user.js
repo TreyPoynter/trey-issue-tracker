@@ -182,11 +182,15 @@ router.post('/login', validBody(loginSchema), async (req, res) => {
             issueAuthCookie(res, authToken);
             debugUser(`Auth Token for ${resultUser.foundUser.fullName} is ${authToken}`);
         }
-        res.status(resultUser.status).json({message:resultUser});
+        res.status(resultUser.status).json({message:resultUser, authToken:req.auth});
     } catch (err) {
         res.status(500).json({error:err.stack});
     }
 
+});
+router.post('/logout', isLoggedIn(), async (req, res) => {
+    res.clearCookie('authToken');
+    res.status(200).json({message:'You have been logged out'});
 });
 //* Update yourself
 router.put('/me', isLoggedIn(), validBody(updateSchema), async (req, res) => {
