@@ -177,6 +177,7 @@ router.post('/login', validBody(loginSchema), async (req, res) => {
     const {email, password} = req.body;
     try {
         const resultUser = await loginUser(email, password);
+        debugUser(resultUser.status)
         if (resultUser.status == 200) {
             const authToken = await issueAuthToken(resultUser.foundUser);
             issueAuthCookie(res, authToken);
@@ -186,7 +187,6 @@ router.post('/login', validBody(loginSchema), async (req, res) => {
     } catch (err) {
         res.status(500).json({error:err.stack});
     }
-
 });
 router.post('/logout', isLoggedIn(), async (req, res) => {
     res.clearCookie('authToken');
