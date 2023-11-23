@@ -178,7 +178,7 @@ validId("bugId"), validBody(classifySchema), async (req, res) => {
 });
 router.put('/:bugId/assign', isLoggedIn(), hasPermission('canReassignAnyBug'), validId("bugId"), async (req, res) => {
     const id = req.bugId;
-    const userId = req.auth._id;
+    const userId = req.body.assignedUserId;
 
     try {
         const result = await assignBug(userId, id, req.auth);

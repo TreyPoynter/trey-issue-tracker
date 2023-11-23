@@ -273,7 +273,7 @@ async function assignBug(userId, bugId, auth) {
 			message : `User ${userId} not found`
 		};
 	}
-	if (bugbug?.assignedInfo?.assignedToUserId != newId(auth._id) && !auth.role.includes('business analyst')) {
+	if (bug?.assignedInfo?.assignedToUserId != newId(auth._id) && !auth.role.includes('business analyst')) {
 		return {
             message: `Only business analysts can edit bugs others are assigned to`,
             status: 400
