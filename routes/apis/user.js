@@ -28,13 +28,15 @@ const loginSchema = Joi.object({
 });
 const updateSchema = Joi.object({
     fullName: Joi.string().trim(),
-    password: Joi.string().trim(),
+    email: Joi.string().trim(),
+    password: Joi.string().allow('', null).trim(),
     givenName: Joi.string().trim(),
     familyName: Joi.string().trim(),
-    role: Joi.array().items(Joi.string().lowercase().trim()
-    .valid('developer', 'quality analyst', 'business analyst', 'product manager', 'technical manager')),
-    role: Joi.string().lowercase().trim()
-    .valid('developer', 'quality analyst', 'business analyst', 'product manager', 'technical manager')
+    role: Joi.array()
+        .items(Joi.string().lowercase().trim().valid(
+            'developer', 'quality analyst', 'business analyst', 'product manager', 'technical manager'
+        ))
+        .min(1)
 });
 dotenv.config();
 const router = express.Router();
@@ -177,7 +179,6 @@ router.post('/login', validBody(loginSchema), async (req, res) => {
     const {email, password} = req.body;
     try {
         const resultUser = await loginUser(email, password);
-        debugUser(resultUser.status)
         if (resultUser.status == 200) {
             const authToken = await issueAuthToken(resultUser.foundUser);
             issueAuthCookie(res, authToken);
