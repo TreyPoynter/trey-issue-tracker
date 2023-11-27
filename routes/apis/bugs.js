@@ -17,7 +17,8 @@ const newBugSchema = Joi.object({
 const updateBugSchema = Joi.object({
     title: Joi.string().trim(),
     description: Joi.string().trim(),
-    stepsToReproduce: Joi.string().trim()
+    classification: {classifiedAs: Joi.string().trim()},
+    stepsToReproduce: Joi.array().items(Joi.string().trim())
 });
 const classifySchema = Joi.object({
     classification: Joi.string().lowercase().valid('approved', 'unapproved', 'duplicate', 'unclassified')
@@ -140,6 +141,7 @@ router.put('/:bugId', isLoggedIn(), hasPermission('canEditAnyBug', 'canEditIfAss
 validId("bugId"), validBody(updateBugSchema), async (req, res) => {
     const id = req.bugId;
     const updatedBug = req.body;
+    debugBug('ROUTER HIT');
 
     try {
         const updateResult = await updateBugById(id, updatedBug, req);
