@@ -51,11 +51,13 @@ async function issueAuthToken(user) {
     const roles = await fetchRoles(user, role => findRoleByName(role));
     const perms = mergePermissions(user, roles);
     payload.permissions = perms;
+    debugUser(payload.permissions);
     const authToken = Jwt.sign(payload, secret, options);  //? Creates the auth token
     return authToken;
 }
 function issueAuthCookie(res, authToken) {
     const cookieOptions = {httpOnly:true, maxAge:1000*60*60};
+    
     res.cookie('authToken', authToken, cookieOptions);
 }
 
@@ -197,21 +199,21 @@ router.post('/logout', isLoggedIn(), async (req, res) => {
 router.put('/me', isLoggedIn(), validBody(updateSchema), async (req, res) => {
     const updatedUser = req.body;
     if (updatedUser.role) {
-        res.status(400).json({message:"Can't modify role"});
-		return;
-	}
+        res.status(400).json({message:"Can't update your own role"});
+        return
+    }
+    debugUser(`Self Route Hit.  ${JSON.stringify(updatedUser)}`);
     if(updatedUser.password)
         updatedUser.password = await bcrypt.hash(updatedUser.password, 10);
     try {
         const updateResult = await updateUser(req.auth._id, updatedUser, req);
         if (updateResult.status == 200) {
-            const authToken = await issueAuthToken(await getUserById(req.auth._id));
+            const authToken = await issueAuthToken((await getUserById(req.auth._id)).foundUser);
             issueAuthCookie(res, authToken);
             const edit = createEdit("Self-Edit Update User", "User", req.auth._id, updatedUser, req.auth);
             const result = await saveEdit(edit);
-            debugUser(JSON.stringify(req.auth));
         }
-        res.status(updateResult.status).json({message:updateResult.message});
+        res.status(updateResult.status).json({message:updateResult.message, authToken:req.auth});
     } catch (err) {
         res.status(500).json({error: err.stack});
     }
