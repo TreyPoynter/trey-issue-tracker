@@ -203,7 +203,7 @@ router.put('/me', isLoggedIn(), validBody(updateSchema), async (req, res) => {
     if(updatedUser.password)
         updatedUser.password = await bcrypt.hash(updatedUser.password, 10);
     try {
-        const updateResult = await updateUser(req.auth._id, updatedUser, "me",req);
+        const updateResult = await updateUser(req.auth._id, updatedUser, req);
         if (updateResult.status == 200) {
             const authToken = await issueAuthToken(await getUserById(req.auth._id));
             issueAuthCookie(res, authToken);
