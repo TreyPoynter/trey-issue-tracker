@@ -245,9 +245,25 @@ validBody(updateSchema), async (req, res) => {
         res.status(500).json({error: err.stack});
     }
 });
-//* DELETE user by ID
-router.delete('/:userId', isLoggedIn(), hasPermission('canEditUser'), validId("userId"), async (req, res) => {
+//* Self service DELETE
+router.delete('/me', isLoggedIn(), validId("userId"), async (req, res) => {
     const id = req.userId;
+    debugUser('HIT SELF DELETE')
+    try {
+        const deleteResult = await deleteUser(req.auth._id);
+        if (deleteResult.status == 200) {
+            const edit = createEdit("Self-Delete", "User", newId(id), null, req.auth);
+            const editResult = await saveEdit(edit);
+        }
+        res.status(deleteResult.status).json({message:deleteResult.message});
+    } catch (err) {
+        res.status(400).json({error:err.stack});
+    }
+});
+//* DELETE user by ID
+router.delete('/:userId', isLoggedIn(), hasPermission('canEditAnyUser'), validId("userId"), async (req, res) => {
+    const id = req.userId;
+    debugUser('HIT DELETE')
     try {
         const deleteResult = await deleteUser(id);
         if (deleteResult.status == 200) {
@@ -259,5 +275,6 @@ router.delete('/:userId', isLoggedIn(), hasPermission('canEditUser'), validId("u
         res.status(400).json({error:err.stack});
     }
 });
+
 
 export {router as UserRouter};
