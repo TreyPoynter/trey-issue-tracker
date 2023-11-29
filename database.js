@@ -84,6 +84,7 @@ async function loginUser(userEmail, userPass) {
 	const db = await connect();
 	const user =  await db.collection("User").findOne({email: userEmail});
     if(user && await bcrypt.compare(userPass, user.password)) {
+		delete user.password;
         return {
             message: `Welcome back ${user.fullName}!`,
             foundUser: user,
