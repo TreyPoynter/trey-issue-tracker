@@ -192,6 +192,7 @@ router.post('/login', validBody(loginSchema), async (req, res) => {
     }
 });
 router.post('/logout', isLoggedIn(), async (req, res) => {
+    debugUser('LOGOUT HIT')
     res.clearCookie('authToken');
     res.status(200).json({message:'You have been logged out'});
 });
