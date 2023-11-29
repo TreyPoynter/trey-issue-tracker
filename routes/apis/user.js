@@ -72,7 +72,7 @@ router.get('/list', isLoggedIn(), hasPermission('canViewData'), async (req, res)
         match.$text = {$search:keywords};
     }
     if (role) {
-        match.role = {$eq:roles};
+        match.role = {$eq:role};
     }
     const today = new Date();
     today.setHours(0);
