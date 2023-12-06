@@ -78,7 +78,7 @@ router.get('/list', isLoggedIn(), hasPermission('canViewData'), async (req, res)
     }
 
     pageNum = parseInt(pageNum) || 1;
-    pageSize = parseInt(pageSize) || 5;
+    pageSize = parseInt(pageSize) || 8;
     const skip = (pageNum-1)*pageSize;
     const limit = pageSize;
     debugBug(`The match object is ${JSON.stringify(match)}`);
