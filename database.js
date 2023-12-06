@@ -353,7 +353,7 @@ async function addCommentToBug(bugId, comment, auth) {
 	const commentor = (await getUserById(auth._id)).foundUser;
 
 	return db.collection("Comment").insertOne({text:comment.text, author:commentor.fullName, 
-		bug_id:bugId, date:new Date(), dateCreated:new Date()});
+		author_id:commentor._id, bug_id:bugId, date:new Date()});
 }
 
 //* BUG TEST CASE FUNCTIONS
