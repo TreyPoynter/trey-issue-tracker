@@ -340,7 +340,7 @@ async function getCommentsForBug(bugId) {
 		return comments;
 	} else {
 		return "Bug has no comments";
-	}
+	} 
 	
 }
 async function getCommentById(bugId, commentId) {
@@ -352,8 +352,10 @@ async function addCommentToBug(bugId, comment, auth) {
 	const db = await connect();
 	const commentor = (await getUserById(auth._id)).foundUser;
 
-	return db.collection("Comment").insertOne({text:comment.text, author:commentor.fullName, 
+	const result = db.collection("Comment").insertOne({text:comment.text, author:commentor.fullName, 
 		author_id:commentor._id, bug_id:bugId, date:new Date()});
+
+	return result
 }
 
 //* BUG TEST CASE FUNCTIONS
