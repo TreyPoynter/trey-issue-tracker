@@ -83,7 +83,6 @@ router.get('/list', isLoggedIn(), hasPermission('canViewData'), async (req, res)
         {$skip: skip},
         {$limit: limit}
     ];
-    debugBug(JSON.stringify(req.query))
     try{
         const bugs = await getBugs(pipeline);
         res.status(bugs.status).json(bugs.foundBugs);
