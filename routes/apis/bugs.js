@@ -34,7 +34,7 @@ router.use(express.urlencoded({extended:false}));
 
 //* GET all bugs
 router.get('/list', isLoggedIn(), hasPermission('canViewData'), async (req, res) => {
-    let {keywords, classification, minAge, maxAge, closed, sortBy, pageSize, pageNum} = req.query;
+    let {keywords, classification, minAge, maxAge, sortBy, pageSize, pageNum} = req.query;
     let sort = {newest:1};
     const match = {};
 
@@ -44,10 +44,6 @@ router.get('/list', isLoggedIn(), hasPermission('canViewData'), async (req, res)
     }
     if (classification) {
         match['classification.classifiedAs'] = classification;
-    }
-    if (closed) {
-        const searchClosed = (closed.toLowerCase() === 'true');
-        match['closedInfo.closed'] = searchClosed;
     }
     const today = new Date();
     today.setHours(0);
@@ -78,16 +74,16 @@ router.get('/list', isLoggedIn(), hasPermission('canViewData'), async (req, res)
     }
 
     pageNum = parseInt(pageNum) || 1;
-    pageSize = parseInt(pageSize) || 8;
+    pageSize = parseInt(pageSize) || 6;
     const skip = (pageNum-1)*pageSize;
     const limit = pageSize;
-    debugBug(`The match object is ${JSON.stringify(match)}`);
     const pipeline = [
         {$match: match},
         {$sort: sort},
         {$skip: skip},
         {$limit: limit}
     ];
+    debugBug(JSON.stringify(req.query))
     try{
         const bugs = await getBugs(pipeline);
         res.status(bugs.status).json(bugs.foundBugs);
