@@ -65,8 +65,8 @@ router.get('/list', isLoggedIn(), hasPermission('canViewData'), async (req, res)
     }
 
     switch (sortBy) {
-        case 'newest': sort = {dateCreated:-1}; break;
-        case 'oldest': sort = {dateCreated:1}; break;
+        case 'newest': sort = {dateCreated:1}; break;
+        case 'oldest': sort = {dateCreated:-1}; break;
         case 'title': sort = {title:1, dateCreated:-1}; break;
         case 'classification': sort = {"classification.classifiedAs":1, dateCreated:-1}; break;
         case 'assignedTo': sort = {"assignedInfo.assignedToName":1, dateCreated:-1}; break;
