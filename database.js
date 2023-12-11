@@ -141,13 +141,13 @@ async function getBugs(pipeline) {
 		return {
 			status : 200,
 			foundBugs : bugs,
-			message : `Found ${bugs.length} users`
+			message : `Found ${bugs.length} bugs`
 		};
 	}
 	return {
 		status : 404,
-		foundBugs : null,
-		message : "No users found"
+		foundBugs : [],
+		message : "No bugs found"
 	};
 }
 async function getBugById(id) {
