@@ -217,6 +217,20 @@ async function updateBugById(id, updatedBug, req) {
         status: 404
     };
 }
+async function deleteBug(id) {
+	const db = await connect();
+	const result =  await db.collection("Bug").deleteOne({_id: newId(id)});
+	if (result.deletedCount > 0) {
+        return {
+            message: `Bug with id ${id} been deleted`,
+            status: 200
+        };
+    }
+    return {
+        message: `Failed to delete bug with id ${id}`,
+        status: 404
+    };
+}
 async function classifyBug(id, classified, auth) {
 	const db = await connect();
 	const selectedBug = (await getBugById(id)).foundBug;
@@ -465,7 +479,7 @@ async function findRoleByName(name) {
 }
 export {connect, newId};
 export {getUsers, getUserById, addNewUser, loginUser, updateUser, deleteUser};
-export {getBugs, getBugById, addNewBug, updateBugById, classifyBug, assignBug, closeBug};
+export {getBugs, getBugById, addNewBug, updateBugById, deleteBug, classifyBug, assignBug, closeBug};
 export {getCommentsForBug, getCommentById, addCommentToBug};
 export {getTestsForBug, getTestById, addTestToBug, updateTestById, deleteTestById};
 export {createEdit, saveEdit};

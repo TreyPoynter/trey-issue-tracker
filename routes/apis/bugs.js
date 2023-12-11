@@ -1,7 +1,7 @@
 
 import express from 'express';
 import {getBugs, getBugById, addNewBug, updateBugById, classifyBug, assignBug, closeBug,
-createEdit, saveEdit, newId} from '../../database.js';
+createEdit, saveEdit, newId, deleteBug} from '../../database.js';
 import debug from 'debug';
 import {validId} from '../../middleware/validId.js';
 import {validBody} from '../../middleware/validBody.js';
@@ -150,6 +150,21 @@ validId("bugId"), validBody(updateBugSchema), async (req, res) => {
         res.status(updateResult.status).json({message: updateResult.message});
     } catch (err) {
         res.status(500).json({error: err.stack});
+    }
+});
+//* DELETE bug by ID
+router.delete('/:bugId', isLoggedIn(), hasPermission('canEditAnyBug', 'canEditIfAssignedTo', 'canEditMyBug'), 
+validId("bugId"), async (req, res) => {
+    const id = req.bugId;
+    try {
+        const deleteResult = await deleteBug(id);
+        if (deleteResult.status == 200) {
+            const edit = createEdit("Delete", "Bug", newId(id), null, req.auth);
+            const editResult = await saveEdit(edit);
+        }
+        res.status(deleteResult.status).json({message:deleteResult.message});
+    } catch (err) {
+        res.status(400).json({error:err.stack});
     }
 });
 //* Classify a bug
