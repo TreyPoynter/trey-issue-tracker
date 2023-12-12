@@ -8,6 +8,7 @@ import {validBody} from '../../middleware/validBody.js';
 import Joi from 'joi';
 import {isLoggedIn, hasPermission} from "@merlin4/express-auth";
 
+const router = express.Router();
 const newBugSchema = Joi.object({
     title: Joi.string().trim().required(),
     description: Joi.string().trim().required(),
@@ -25,10 +26,8 @@ const classifySchema = Joi.object({
 const closeSchema = Joi.object({
     closed: Joi.boolean().required()
 });
-const router = express.Router();
-const debugBug = debug('app:BugRouter');
 
-router.use(express.urlencoded({extended:false}));
+const debugBug = debug('app:BugRouter');
 
 //* GET all bugs
 router.get('/list', isLoggedIn(), hasPermission('canViewData'), async (req, res) => {

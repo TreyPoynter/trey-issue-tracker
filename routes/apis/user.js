@@ -11,6 +11,7 @@ import { removeEmptyStrings } from "../../middleware/removeEmptyStrings.js";
 import  Jwt from "jsonwebtoken";
 import {isLoggedIn, fetchRoles, mergePermissions, hasPermission} from "@merlin4/express-auth";
 
+const router = express.Router();
 const newUserSchema = Joi.object({
     fullName: Joi.string().trim().required(),
     email: Joi.string().email().required(),
@@ -39,7 +40,6 @@ const updateSchema = Joi.object({
         .min(1)
 });
 dotenv.config();
-const router = express.Router();
 const debugUser = debug('app:User');
 
 router.use(express.urlencoded({extended:false}));
@@ -66,12 +66,7 @@ async function issueAuthToken(user) {
 }
 
 function issueAuthCookie(res, authToken) {
-    const cookieOptions = {
-        httpOnly: true,
-        maxAge: 1000 * 60 * 60, // 1 hour in milliseconds
-        sameSite: 'none',
-        secure: true,
-    };
+    const cookieOptions = {httpOnly: true,maxAge: 1000 * 60 * 60,sameSite: 'None',secure: true,domain: 'https://trey-bugtracker-frontend.uc.r.appspot.com'};
 
     res.cookie('authToken', authToken, cookieOptions);
 }
