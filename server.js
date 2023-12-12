@@ -15,7 +15,7 @@ const app = express();
 const port = process.env.PORT || 5001;
 app.use(express.json())
 app.use(cors({
-    origin : "http://localhost:5173",
+    origin : ["http://localhost:5173", 'https://trey-bugtracker-frontend.uc.r.appspot.com'],
     credentials : true
 }))
 app.use(express.static('public'));
