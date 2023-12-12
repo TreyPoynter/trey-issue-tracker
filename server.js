@@ -11,6 +11,7 @@ import { authMiddleware } from "@merlin4/express-auth";
 
 dotenv.config();
 const app = express();
+app.set("trust proxy", 1)
 app.use(express.static('public'));
 const debugServer = debug('app:Server');
 app.use(express.json())
