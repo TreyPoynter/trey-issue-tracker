@@ -69,8 +69,8 @@ function issueAuthCookie(res, authToken) {
     const cookieOptions = {
         httpOnly: true,
         maxAge: 1000 * 60 * 60, // 1 hour in milliseconds
-        sameSite: 'None',
-        secure: process.env.NODE_ENV === 'production', // Only set secure flag in production
+        sameSite: 'none',
+        secure: true,
     };
 
     res.cookie('authToken', authToken, cookieOptions);

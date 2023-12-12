@@ -6,9 +6,7 @@ import debug from 'debug';
 import {validId} from '../../middleware/validId.js';
 import {validBody} from '../../middleware/validBody.js';
 import Joi from 'joi';
-import  Jwt from "jsonwebtoken";
 import {isLoggedIn, hasPermission} from "@merlin4/express-auth";
-import { ObjectId } from 'mongodb';
 
 const newBugSchema = Joi.object({
     title: Joi.string().trim().required(),
@@ -99,7 +97,7 @@ router.get('/:bugId', isLoggedIn(), hasPermission('canViewData'), validId("bugId
     } catch (err) {
         res.status(500).json({error:err.stack});
     }
-    
+
 });
 //* PUT new bug
 router.put('/new', isLoggedIn(), hasPermission('canCreateBug'), validBody(newBugSchema), async (req, res) => {
@@ -129,11 +127,10 @@ router.put('/new', isLoggedIn(), hasPermission('canCreateBug'), validBody(newBug
     } catch (err) {
         res.status(500).json({error:err.stack});
     }
-    
-    
+
 });
 //* Update bug with id
-router.put('/:bugId', isLoggedIn(), hasPermission('canEditAnyBug', 'canEditIfAssignedTo', 'canEditMyBug'), 
+router.put('/:bugId', isLoggedIn(), hasPermission('canEditAnyBug', 'canEditIfAssignedTo', 'canEditMyBug'),
 validId("bugId"), validBody(updateBugSchema), async (req, res) => {
     const id = req.bugId;
     const updatedBug = req.body;
@@ -153,7 +150,7 @@ validId("bugId"), validBody(updateBugSchema), async (req, res) => {
     }
 });
 //* DELETE bug by ID
-router.delete('/:bugId', isLoggedIn(), hasPermission('canEditAnyBug', 'canEditIfAssignedTo', 'canEditMyBug'), 
+router.delete('/:bugId', isLoggedIn(), hasPermission('canEditAnyBug', 'canEditIfAssignedTo', 'canEditMyBug'),
 validId("bugId"), async (req, res) => {
     const id = req.bugId;
     try {
@@ -168,7 +165,7 @@ validId("bugId"), async (req, res) => {
     }
 });
 //* Classify a bug
-router.put('/:bugId/classify', isLoggedIn(), hasPermission('canClassifyAnyBug'), 
+router.put('/:bugId/classify', isLoggedIn(), hasPermission('canClassifyAnyBug'),
 validId("bugId"), validBody(classifySchema), async (req, res) => {
     const id = req.params.bugId;
     const classification = req.body.classification;
@@ -187,7 +184,7 @@ validId("bugId"), validBody(classifySchema), async (req, res) => {
             res.status(500).json({error: err.stack});
         }
     }
-    
+
 });
 router.put('/:bugId/assign', isLoggedIn(), hasPermission('canReassignAnyBug'), validId("bugId"), async (req, res) => {
     const id = req.bugId;
@@ -207,7 +204,7 @@ router.put('/:bugId/assign', isLoggedIn(), hasPermission('canReassignAnyBug'), v
         res.status(500).json({error: err.message});
     }
 });
-router.put('/:bugId/close', isLoggedIn(), hasPermission('canCloseAnyBug'), 
+router.put('/:bugId/close', isLoggedIn(), hasPermission('canCloseAnyBug'),
 validId("bugId"), validBody(closeSchema), async (req, res) => {
     const id = req.bugId;
     const isClosed = req.body.closed;

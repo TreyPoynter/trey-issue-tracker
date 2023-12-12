@@ -51,7 +51,6 @@ validId('bugId'), validBody(commentSchema), async (req, res) => {
         const result = await addCommentToBug(id, newComment, req.auth);
         res.status(200).json(result);
     } catch (err) {
-        
     }
 });
 

@@ -10,15 +10,16 @@ import cookieParser from "cookie-parser";
 import { authMiddleware } from "@merlin4/express-auth";
 
 dotenv.config();
-const debugServer = debug('app:Server');
 const app = express();
-const port = process.env.PORT || 5001;
+app.use(express.static('public'));
+const debugServer = debug('app:Server');
 app.use(express.json())
 app.use(cors({
     origin : ["http://localhost:5173", 'https://trey-bugtracker-frontend.uc.r.appspot.com'],
     credentials : true
-}))
-app.use(express.static('public'));
+}));
+const port = process.env.PORT || 5001;
+
 app.use(cookieParser());
 app.use(authMiddleware(process.env.JWT_SECRET, 'authToken', {
     httpOnly: true,
@@ -30,7 +31,7 @@ app.get('/', (req, res) => {
     res.sendFile('/public/index.html');
 });
 
-
+app.use(express.urlencoded({extended: true}));
 app.use('/api/users', UserRouter);
 app.use('/api/bugs', BugRouter);
 app.use('/api/bugs', CommentRouter);
