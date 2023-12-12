@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv"
-import {getUsers, getUserById, addNewUser, loginUser, updateUser, 
+import {getUsers, getUserById, addNewUser, loginUser, updateUser,
     deleteUser, newId, createEdit, saveEdit, findRoleByName} from "../../database.js"
 import express from 'express';
 import bcrypt from "bcrypt"
@@ -45,19 +45,34 @@ const debugUser = debug('app:User');
 router.use(express.urlencoded({extended:false}));
 
 async function issueAuthToken(user) {
-    const payload = {_id:user._id, email:user.email, role:user.role, name:user.fullName};
+    const payload = {
+        _id: user._id,
+        email: user.email,
+        role: user.role,
+        name: user.fullName,
+    };
+
     const secret = process.env.JWT_SECRET;
-    const options = {expiresIn:'1h'};
-    const roles = await fetchRoles(user, role => findRoleByName(role));
+    const options = { expiresIn: '1h' };
+
+    const roles = await fetchRoles(user, (role) => findRoleByName(role));
     const perms = mergePermissions(user, roles);
     payload.permissions = perms;
+
     debugUser(payload.permissions);
-    const authToken = Jwt.sign(payload, secret, options);  //? Creates the auth token
+
+    const authToken = Jwt.sign(payload, secret, options);
     return authToken;
 }
+
 function issueAuthCookie(res, authToken) {
-    const cookieOptions = {httpOnly:true, maxAge:1000*60*60};
-    
+    const cookieOptions = {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60, // 1 hour in milliseconds
+        sameSite: 'None',
+        secure: process.env.NODE_ENV === 'production', // Only set secure flag in production
+    };
+
     res.cookie('authToken', authToken, cookieOptions);
 }
 
@@ -120,7 +135,7 @@ router.get('/list', isLoggedIn(), hasPermission('canViewData'), async (req, res)
         } else {
             res.status(users.status).json(users.message);
         }
-        
+
     } catch (err) {
         res.status(400).json({error:err.stack});
     }
@@ -134,7 +149,7 @@ router.get('/me', isLoggedIn(), async (req, res) => {
         } else {
             res.status(userResult.status).json({message : userResult.message});
         }
-        
+
     } catch (err) {
         res.status(500).json({error: err.stack});
     }
@@ -149,7 +164,7 @@ router.get('/:userId', isLoggedIn(), hasPermission('canViewData'), validId("user
         } else {
             res.status(user.status).json(user.message);
         }
-        
+
     } catch (err) {
         res.status(500).json({error: err.stack});
     }
@@ -220,7 +235,7 @@ router.put('/me', isLoggedIn(), validBody(updateSchema), async (req, res) => {
     }
 });
 //* Update User by ID
-router.put('/:userId', isLoggedIn(), hasPermission('canEditAnyUser'), validId("userId"), 
+router.put('/:userId', isLoggedIn(), hasPermission('canEditAnyUser'), validId("userId"),
 validBody(updateSchema), async (req, res) => {
     const id = req.userId;
     const updatedUser = req.body;
