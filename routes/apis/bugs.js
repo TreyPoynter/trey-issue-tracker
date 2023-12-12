@@ -13,7 +13,7 @@ import { ObjectId } from 'mongodb';
 const newBugSchema = Joi.object({
     title: Joi.string().trim().required(),
     description: Joi.string().trim().required(),
-    stepsToReproduce: Joi.string().trim().required()
+    stepsToReproduce: Joi.array().items(Joi.string().trim()).required()
 });
 const updateBugSchema = Joi.object({
     title: Joi.string().trim(),
