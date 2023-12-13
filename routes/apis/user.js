@@ -66,7 +66,7 @@ async function issueAuthToken(user) {
 }
 
 function issueAuthCookie(res, authToken) {
-    const cookieOptions = {httpOnly: true,maxAge: 1000 * 60 * 60,sameSite: 'None',secure: true,domain: 'https://trey-bugtracker-frontend.uc.r.appspot.com'};
+    const cookieOptions = {httpOnly: true,maxAge: 1000 * 60 * 60,sameSite: 'None',secure: true};
 
     res.cookie('authToken', authToken, cookieOptions);
 }
