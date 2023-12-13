@@ -11,7 +11,7 @@ import { authMiddleware } from "@merlin4/express-auth";
 
 dotenv.config();
 const app = express();
-app.set("trust proxy", 1)
+app.use(cookieParser());
 app.use(express.static('public'));
 const debugServer = debug('app:Server');
 app.use(express.json())
@@ -21,7 +21,7 @@ app.use(cors({
 }));
 const port = process.env.PORT || 5001;
 
-app.use(cookieParser());
+
 app.use(authMiddleware(process.env.JWT_SECRET, 'authToken', {
     httpOnly: true,
     maxAge: 1000*60*60
