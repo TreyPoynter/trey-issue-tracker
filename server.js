@@ -11,21 +11,15 @@ import { TestRouter } from './routes/apis/test.js';
 
 dotenv.config();
 const app = express();
-app.set("trust proxy", 1)
+app.use(cookieParser());
 app.use(express.static('public'));
 const debugServer = debug('app:Server');
 app.use(express.json());
 app.use(cors({
-    origin : ["http://localhost:5173", 'https://trey-bugtracker-frontend.uc.r.appspot.com'],
-    credentials : true
+    origin: ["http://localhost:5173", 'https://trey-bugtracker-frontend.uc.r.appspot.com'],
+    credentials: true,
 }));
 const port = process.env.PORT || 5001;
-
-
-app.use(authMiddleware(process.env.JWT_SECRET, 'authToken', {
-    httpOnly: true,
-    maxAge: 1000 * 60 * 60,
-}));
 
 app.get('/', (req, res) => {
     debugServer('Home Route hit!');
