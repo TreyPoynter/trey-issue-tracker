@@ -27,7 +27,7 @@ app.use((req, res, next) => {
     const authToken = req.cookies.auth;
 
     // Move the cookie value to req.auth
-    req.auth = authToken;
+    req.auth = JSON.parse(authToken);
 
     // Continue processing the request
     next();
