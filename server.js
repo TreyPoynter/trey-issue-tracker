@@ -11,7 +11,7 @@ import { TestRouter } from './routes/apis/test.js';
 
 dotenv.config();
 const app = express();
-app.use(cookieParser());
+app.set("trust proxy", 1)
 app.use(express.static('public'));
 const debugServer = debug('app:Server');
 app.use(express.json());
@@ -21,20 +21,8 @@ app.use(cors({
 }));
 const port = process.env.PORT || 5001;
 
-// Custom middleware to move the cookie value to req.auth
-app.use((req, res, next) => {
-    // Access the 'auth' cookie
-    const authToken = req.cookies.auth;
 
-    // Move the cookie value to req.auth
-    req.auth = JSON.parse(authToken);
-
-    // Continue processing the request
-    next();
-});
-
-// Use authMiddleware with req.auth
-app.use(authMiddleware(process.env.JWT_SECRET, 'auth', {
+app.use(authMiddleware(process.env.JWT_SECRET, 'authToken', {
     httpOnly: true,
     maxAge: 1000 * 60 * 60,
 }));
