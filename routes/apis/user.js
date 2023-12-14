@@ -59,14 +59,12 @@ async function issueAuthToken(user) {
     const perms = mergePermissions(user, roles);
     payload.permissions = perms;
 
-    debugUser(payload.permissions);
-
     const authToken = Jwt.sign(payload, secret, options);
-    return authToken;
+    return authToken
 }
 
 function issueAuthCookie(res, authToken) {
-    const cookieOptions = {httpOnly: true,maxAge: 1000 * 60 * 60,sameSite: 'None',secure: true,domain: '.uc.r.appspot.com'};
+    const cookieOptions = {httpOnly: true,maxAge: 1000 * 60 * 60};
 
     res.cookie('authToken', authToken, cookieOptions);
 }
@@ -152,8 +150,8 @@ router.get('/me', isLoggedIn(), async (req, res) => {
 //* GETS user by id
 router.get('/:userId', isLoggedIn(), hasPermission('canViewData'), validId("userId"), async (req, res) => {
     const userId = req.userId;
-    try {
-        const user = await getUserById(userId);
+    try {ByI
+        const user = await getUserd(userId);
         if (user.foundUser) {
             res.status(user.status).json(user.foundUser);
         } else {
@@ -195,10 +193,8 @@ router.post('/login', validBody(loginSchema), async (req, res) => {
             const authToken = await issueAuthToken(resultUser.foundUser);
             issueAuthCookie(res, authToken);
             debugUser(`Auth Token for ${resultUser.foundUser.fullName} is ${authToken}`);
-            res.status(resultUser.status).json({message:resultUser, authToken:authToken});
-            return;
         }
-        res.status(resultUser.status).json({message:resultUser});
+        res.status(resultUser.status).json({message:resultUser, authToken:req.auth});
     } catch (err) {
         res.status(500).json({error:err.stack});
     }

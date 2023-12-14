@@ -29,7 +29,8 @@ router.get('/:bugId/test/list', isLoggedIn(), hasPermission('canViewData'), vali
         res.status(500).json({error: err.stack});
     }
 });
-router.get('/:bugId/test/:testId', isLoggedIn(), hasPermission('canViewData'), validId('bugId'), validId('testId'), async (req, res) => {
+router.get('/:bugId/test/:testId', isLoggedIn(), hasPermission('canViewData'), 
+validId('bugId'), validId('testId'), async (req, res) => {
     const bugId = req.bugId;
     const testId = req.testId;
     try {
