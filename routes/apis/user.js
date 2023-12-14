@@ -150,8 +150,8 @@ router.get('/me', isLoggedIn(), async (req, res) => {
 //* GETS user by id
 router.get('/:userId', isLoggedIn(), hasPermission('canViewData'), validId("userId"), async (req, res) => {
     const userId = req.userId;
-    try {ByI
-        const user = await getUserd(userId);
+    try {
+        const user = await getUserById(userId);
         if (user.foundUser) {
             res.status(user.status).json(user.foundUser);
         } else {
