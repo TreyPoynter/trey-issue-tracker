@@ -8,6 +8,10 @@ import express from 'express';
 import cors from 'cors'
 import cookieParser from "cookie-parser";
 import { authMiddleware } from "@merlin4/express-auth";
+import './routes/apis/passport-config.js'
+import passport from "passport";
+const session = require('express-session');
+const passportConfig = require('./config/passport-config');
 
 dotenv.config();
 const app = express();
@@ -20,6 +24,10 @@ app.use(cors({
     credentials : true
 }));
 const port = process.env.PORT || 5001;
+
+app.use(session({ secret: process.env.CLIENT_SECRET, resave: true, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 app.use(authMiddleware(process.env.JWT_SECRET, 'authToken', {

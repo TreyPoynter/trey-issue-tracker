@@ -11,6 +11,7 @@ import { removeEmptyStrings } from "../../middleware/removeEmptyStrings.js";
 import  Jwt from "jsonwebtoken";
 import {isLoggedIn, fetchRoles, mergePermissions, hasPermission} from "@merlin4/express-auth";
 
+
 const router = express.Router();
 const newUserSchema = Joi.object({
     fullName: Joi.string().trim().required(),
