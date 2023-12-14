@@ -193,10 +193,11 @@ router.post('/login', validBody(loginSchema), async (req, res) => {
         const resultUser = await loginUser(email, password);
         if (resultUser.status == 200) {
             const authToken = await issueAuthToken(resultUser.foundUser);
-            issueAuthCookie(res, authToken);
             debugUser(`Auth Token for ${resultUser.foundUser.fullName} is ${authToken}`);
+            res.status(resultUser.status).json({message:resultUser, authToken:authToken});
+            return;
         }
-        res.status(resultUser.status).json({message:resultUser, authToken:req.auth});
+        res.status(resultUser.status).json({message:resultUser});
     } catch (err) {
         res.status(500).json({error:err.stack});
     }
