@@ -1,30 +1,42 @@
-import * as dotenv from "dotenv"
+import * as dotenv from 'dotenv';
 import debug from 'debug';
-import { UserRouter } from "./routes/apis/user.js";
-import { BugRouter } from "./routes/apis/bugs.js";
-import { CommentRouter } from "./routes/apis/comments.js";
-import { TestRouter } from "./routes/apis/test.js";
 import express from 'express';
-import cors from 'cors'
-import cookieParser from "cookie-parser";
-import { authMiddleware } from "@merlin4/express-auth";
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import { authMiddleware } from '@merlin4/express-auth';
+import { UserRouter } from './routes/apis/user.js';
+import { BugRouter } from './routes/apis/bugs.js';
+import { CommentRouter } from './routes/apis/comments.js';
+import { TestRouter } from './routes/apis/test.js';
 
 dotenv.config();
 const app = express();
 app.use(cookieParser());
 app.use(express.static('public'));
 const debugServer = debug('app:Server');
-app.use(express.json())
+app.use(express.json());
 app.use(cors({
-    origin : ["http://localhost:5173", 'https://trey-bugtracker-frontend.uc.r.appspot.com'],
-    credentials : true
+    origin: ["http://localhost:5173", 'https://trey-bugtracker-frontend.uc.r.appspot.com'],
+    credentials: true,
 }));
 const port = process.env.PORT || 5001;
 
+// Custom middleware to move the cookie value to req.auth
+app.use((req, res, next) => {
+    // Access the 'auth' cookie
+    const authToken = req.cookies.auth;
 
-app.use(authMiddleware(process.env.JWT_SECRET, 'authToken', {
+    // Move the cookie value to req.auth
+    req.auth = authToken;
+
+    // Continue processing the request
+    next();
+});
+
+// Use authMiddleware with req.auth
+app.use(authMiddleware(process.env.JWT_SECRET, 'auth', {
     httpOnly: true,
-    maxAge: 1000*60*60
+    maxAge: 1000 * 60 * 60,
 }));
 
 app.get('/', (req, res) => {
@@ -32,18 +44,19 @@ app.get('/', (req, res) => {
     res.sendFile('/public/index.html');
 });
 
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use('/api/users', UserRouter);
 app.use('/api/bugs', BugRouter);
 app.use('/api/bugs', CommentRouter);
 app.use('/api/bug', TestRouter);
 
 app.use((err, req, res, next) => {
-    res.status(err.status).json({error: err.message});
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.status(err.status).json({ error: err.message });
 });
 
 app.use((req, res) => {
-    res.status(404).json({error:`Couldn't hit ${req.originalUrl}`});
+    res.status(404).json({ error: `Couldn't hit ${req.originalUrl}` });
 });
 
 app.listen(port, () => {

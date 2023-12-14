@@ -30,10 +30,12 @@ const closeSchema = Joi.object({
 const debugBug = debug('app:BugRouter');
 
 //* GET all bugs
-router.get('/list', isLoggedIn(), hasPermission('canViewData'), async (req, res) => {
+router.get('/list', /*isLoggedIn(), hasPermission('canViewData'),*/ async (req, res) => {
     let {keywords, classification, minAge, maxAge, sortBy, pageSize, pageNum} = req.query;
     let sort = {newest:1};
     const match = {};
+
+    debugBug(req.auth)
 
     //? Filter through the requested queries
     if (keywords) {
