@@ -66,7 +66,7 @@ async function issueAuthToken(user) {
 }
 
 function issueAuthCookie(res, authToken) {
-    const cookieOptions = {httpOnly: true,maxAge: 1000 * 60 * 60,sameSite: 'None',secure: true,domain: 'https://trey-bugtracker-frontend.uc.r.appspot.com'};
+    const cookieOptions = {httpOnly: true,maxAge: 1000 * 60 * 60,sameSite: 'None',secure: true,domain: '.uc.r.appspot.com'};
 
     res.cookie('authToken', authToken, cookieOptions);
 }
@@ -193,6 +193,7 @@ router.post('/login', validBody(loginSchema), async (req, res) => {
         const resultUser = await loginUser(email, password);
         if (resultUser.status == 200) {
             const authToken = await issueAuthToken(resultUser.foundUser);
+            issueAuthCookie(res, authToken);
             debugUser(`Auth Token for ${resultUser.foundUser.fullName} is ${authToken}`);
             res.status(resultUser.status).json({message:resultUser, authToken:authToken});
             return;
