@@ -55,22 +55,7 @@ async function getUserById(id) {
 		message : `User with id ${id} not found`
 	};
 }
-async function getUserByGithubId(id) {
-	const db = await connect();
-	const user = await db.collection("User").findOne({'providers.githubId': id}, { projection: { password: 0 } });
-	if (user) {
-		return {
-			status : 200,
-			foundUser : user,
-			message : `Found user ${user.fullName}`
-		};
-	}
-	return {
-		status : 404,
-		foundUser : null,
-		message : `User with id ${id} not found`
-	};
-}
+
 async function addNewUser(user) {
 	const db = await connect();
     const emailExists =  await db.collection("User").findOne({email: user.email});
@@ -494,7 +479,7 @@ async function findRoleByName(name) {
     return role;
 }
 export {connect, newId};
-export {getUsers, getUserById, getUserByGithubId, addNewUser, loginUser, updateUser, deleteUser};
+export {getUsers, getUserById, addNewUser, loginUser, updateUser, deleteUser};
 export {getBugs, getBugById, addNewBug, updateBugById, deleteBug, classifyBug, assignBug, closeBug};
 export {getCommentsForBug, getCommentById, addCommentToBug};
 export {getTestsForBug, getTestById, addTestToBug, updateTestById, deleteTestById};
