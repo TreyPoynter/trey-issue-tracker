@@ -10,8 +10,8 @@ router.get('/github',
 router.get('/github/callback',
     passport.authenticate('github', { failureRedirect: '/' }),
     (req, res) => {
-        // Successful authentication, redirect to the frontend or do whatever you need
-        res.redirect('/');
+        const frontendRedirectURL = 'http://localhost:5173';
+        res.redirect(frontendRedirectURL);
     }
 );
 
