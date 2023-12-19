@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv"
 import {getUsers, getUserById, addNewUser, loginUser, updateUser,
-    deleteUser, newId, createEdit, saveEdit, findRoleByName} from "../../database.js"
+    deleteUser, newId, createEdit, saveEdit, findRoleByName, loginUserGitHub} from "../../database.js"
 import express from 'express';
 import bcrypt from "bcrypt"
 import debug from 'debug';
@@ -27,6 +27,10 @@ const newUserSchema = Joi.object({
 const loginSchema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().trim().required()
+});
+const githubLoginSchema = Joi.object({
+    email: Joi.string().email().required(),
+    githubId: Joi.string().required(),
 });
 const updateSchema = Joi.object({
     fullName: Joi.string().trim(),
@@ -111,7 +115,7 @@ router.get('/list', isLoggedIn(), hasPermission('canViewData'), async (req, res)
     }
 
     pageNum = parseInt(pageNum) || 1;
-    pageSize = parseInt(pageSize) || 5;
+    pageSize = parseInt(pageSize) || 9;
     const skip = (pageNum-1)*pageSize;
     const limit = pageSize;
     const pipeline = [
@@ -190,6 +194,20 @@ router.post('/login', validBody(loginSchema), async (req, res) => {
     const {email, password} = req.body;
     try {
         const resultUser = await loginUser(email, password);
+        if (resultUser.status == 200) {
+            const authToken = await issueAuthToken(resultUser.foundUser);
+            issueAuthCookie(res, authToken);
+            debugUser(`Auth Token for ${resultUser.foundUser.fullName} is ${authToken}`);
+        }
+        res.status(resultUser.status).json({message:resultUser, authToken:req.auth});
+    } catch (err) {
+        res.status(500).json({error:err.stack});
+    }
+});
+router.post('/github/login', validBody(githubLoginSchema), async (req, res) => {
+    const {email, githubId} = req.body;
+    try {
+        const resultUser = await loginUserGitHub(email, githubId);
         if (resultUser.status == 200) {
             const authToken = await issueAuthToken(resultUser.foundUser);
             issueAuthCookie(res, authToken);

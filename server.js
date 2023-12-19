@@ -30,17 +30,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 const port = process.env.PORT || 5001;
-let _db = null;
-
-async function connect() {
-    if (!_db) {
-        const connectionString = process.env.DB_URL;
-        const dbName = process.env.DB_NAME;
-        const client = await MongoClient.connect(connectionString);
-        _db = client.db(dbName);
-    }
-    return _db;
-}
 
 app.use(
     authMiddleware(process.env.JWT_SECRET, "authToken", {
@@ -48,15 +37,6 @@ app.use(
         maxAge: 1000 * 60 * 60,
     })
 );
-
-// Example route for checking authentication
-app.get("/user", (req, res) => {
-    if (req.isAuthenticated()) {
-        res.json({ user: req.user });
-    } else {
-        res.status(401).json({ error: "Not authenticated" });
-    }
-});
 
 app.get("/", (req, res) => {
     debugServer("Home Route hit!");

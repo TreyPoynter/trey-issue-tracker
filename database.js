@@ -55,6 +55,22 @@ async function getUserById(id) {
 		message : `User with id ${id} not found`
 	};
 }
+async function getUserByGithubId(id) {
+	const db = await connect();
+	const user = await db.collection("User").findOne({githubId: id}, { projection: { password: 0 } });
+	if (user) {
+		return {
+			status : 200,
+			foundUser : user,
+			message : `Found user ${user.fullName}`
+		};
+	}
+	return {
+		status : 404,
+		foundUser : null,
+		message : `User with id ${id} not found`
+	};
+}
 
 async function addNewUser(user) {
 	const db = await connect();
@@ -98,6 +114,22 @@ async function loginUser(userEmail, userPass) {
         status: 404
     };
 }
+async function loginUserGitHub(userEmail, githubId) {
+	const db = await connect();
+	const user =  await db.collection("User").findOne({email: userEmail, githubId:githubId});
+    if(user) {
+        return {
+            message: `Welcome back ${user.fullName}!`,
+            foundUser: user,
+            status: 200 
+        };
+    }
+    return {
+        message: "Invalid credentials",
+        foundUser: null,
+        status: 404
+    };
+}
 //? pass in null for req when you don't want to track lastUpdated, and lastUpdatedBy
 async function updateUser(id, updatedUser, req) {
 	const db = await connect();
@@ -115,6 +147,24 @@ async function updateUser(id, updatedUser, req) {
     }
     return {
         message: `Failed to update user with id ${id}`,
+        status: 404
+    };
+}
+async function userGithubRegister(githubId, updatedUser) {
+	const db = await connect();
+
+	if(typeof(updatedUser.role) == "string")
+		updatedUser.role = [updatedUser.role];
+	const result = await db.collection("User").updateOne({githubId:githubId}, {$set:{...updatedUser}});
+
+    if (result.modifiedCount > 0) {
+        return {
+            message: `User with id ${githubId} been updated`,
+            status: 200
+        };
+    }
+    return {
+        message: `Failed to update user with id ${githubId}`,
         status: 404
     };
 }
@@ -479,7 +529,8 @@ async function findRoleByName(name) {
     return role;
 }
 export {connect, newId};
-export {getUsers, getUserById, addNewUser, loginUser, updateUser, deleteUser};
+export {getUsers, getUserById, getUserByGithubId, addNewUser, loginUser, loginUserGitHub, updateUser, 
+	userGithubRegister, deleteUser};
 export {getBugs, getBugById, addNewBug, updateBugById, deleteBug, classifyBug, assignBug, closeBug};
 export {getCommentsForBug, getCommentById, addCommentToBug};
 export {getTestsForBug, getTestById, addTestToBug, updateTestById, deleteTestById};
