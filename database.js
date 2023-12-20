@@ -194,13 +194,16 @@ async function updateBugById(id, updatedBug, req) {
 		updatedBug["update.lastUpdated"] = new Date();
 		updatedBug["update.lastUpdatedBy"] = (await getUserById(req.auth._id)).foundUser.fullName;
 	}
-	if (bug?.assignedInfo?.assignedToUserId != newId(req.auth._id) && !req.auth.role.includes('business analyst')) {
+	debugDb(bug?.assignedInfo?.assignedToUserId)
+	debugDb(newId(req.auth._id))
+	debugDb(`${bug?.assignedInfo?.assignedToUserId == newId(req.auth._id)}`)
+	if (bug?.assignedInfo?.assignedToUserId == newId(req.auth._id) && !req.auth.role.includes('business analyst')) {
 		return {
 			message: `Only business analysts can edit bugs others are assigned to`,
 			status: 400
 		};
 	}
-	if (bug.createdBy.user_id != newId(req.auth._id) && !req.auth.role.includes('business analyst')) {
+	if (bug.createdBy.user_id == newId(req.auth._id) && !req.auth.role.includes('business analyst')) {
 		return {
 			message: `Only business analysts can edit others bugs`,
 			status: 400
