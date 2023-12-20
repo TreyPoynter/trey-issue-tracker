@@ -204,20 +204,6 @@ router.post('/login', validBody(loginSchema), async (req, res) => {
         res.status(500).json({error:err.stack});
     }
 });
-router.post('/github/login', validBody(githubLoginSchema), async (req, res) => {
-    const {email, githubId} = req.body;
-    try {
-        const resultUser = await loginUserGitHub(email, githubId);
-        if (resultUser.status == 200) {
-            const authToken = await issueAuthToken(resultUser.foundUser);
-            issueAuthCookie(res, authToken);
-            debugUser(`Auth Token for ${resultUser.foundUser.fullName} is ${authToken}`);
-        }
-        res.status(resultUser.status).json({message:resultUser, authToken:req.auth});
-    } catch (err) {
-        res.status(500).json({error:err.stack});
-    }
-});
 router.post('/logout', isLoggedIn(), async (req, res) => {
     debugUser('LOGOUT HIT')
     res.clearCookie('authToken');

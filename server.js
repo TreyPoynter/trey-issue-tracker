@@ -4,17 +4,13 @@ import { UserRouter } from "./routes/apis/user.js";
 import { BugRouter } from "./routes/apis/bugs.js";
 import { CommentRouter } from "./routes/apis/comments.js";
 import { TestRouter } from "./routes/apis/test.js";
-import { AuthRoute } from "./routes/apis/authRoutes.js";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { authMiddleware } from "@merlin4/express-auth";
 import session from "express-session";
-import passport from "./oauth.js";
-import { MongoClient } from 'mongodb';
 
 dotenv.config();
-const CLIENT_URL = "http://localhost:5173";
 const app = express();
 app.use(cookieParser());
 app.use(express.static("public"));
@@ -27,8 +23,6 @@ app.use(
         credentials: true,
     })
 );
-app.use(passport.initialize());
-app.use(passport.session());
 const port = process.env.PORT || 5001;
 
 app.use(
@@ -48,7 +42,6 @@ app.use("/api/users", UserRouter);
 app.use("/api/bugs", BugRouter);
 app.use("/api/bugs", CommentRouter);
 app.use("/api/bug", TestRouter);
-app.use("/auth", AuthRoute);
 
 app.use((err, req, res, next) => {
     res.status(err.status).json({ error: err.message });
