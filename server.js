@@ -9,6 +9,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { authMiddleware } from "@merlin4/express-auth";
 import session from "express-session";
+import { EditRouter } from "./routes/apis/edits.js";
 
 dotenv.config();
 const app = express();
@@ -42,6 +43,7 @@ app.use("/api/users", UserRouter);
 app.use("/api/bugs", BugRouter);
 app.use("/api/bugs", CommentRouter);
 app.use("/api/bug", TestRouter);
+app.use("/api/edits", EditRouter);
 
 app.use((err, req, res, next) => {
     res.status(err.status).json({ error: err.message });

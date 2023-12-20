@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv"
 import {getUsers, getUserById, addNewUser, loginUser, updateUser,
-    deleteUser, newId, createEdit, saveEdit, findRoleByName, loginUserGitHub} from "../../database.js"
+    deleteUser, newId, createEdit, saveEdit, findRoleByName} from "../../database.js"
 import express from 'express';
 import bcrypt from "bcrypt"
 import debug from 'debug';
