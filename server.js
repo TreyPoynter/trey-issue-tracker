@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(
     cors({
         origin: ["http://localhost:5173", "https://trey-bugtracker-frontend.uc.r.appspot.com"],
-        credentials: true,
+        credentials: true, httpOnly: true, sameSite:true
     })
 );
 const port = process.env.PORT || 5001;
@@ -38,7 +38,7 @@ app.get("/", (req, res) => {
     res.sendFile("/public/index.html");
 });
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, sameSite:true, httpOnly:true }));
 app.use("/api/users", UserRouter);
 app.use("/api/bugs", BugRouter);
 app.use("/api/bugs", CommentRouter);
